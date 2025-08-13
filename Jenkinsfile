@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_REGION = 'ap-south-1'
         AWS_CREDENTIALS = credentials('aws-creds')
-        ECR_REPO = '897722705527.dkr.ecr.ap-south-1.amazonaws.com/nodeapp'
+        ECR_REPO = '897722705527.dkr.ecr.ap-south-1.amazonaws.com/my-project'
         IMAGE_TAG = 'latest'
     }
 
