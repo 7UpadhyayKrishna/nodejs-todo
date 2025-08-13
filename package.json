@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.0",
+    "docker": "^1.0.0",
     "ejs": "^2.5.7",
     "express": "^4.15.4"
   }
