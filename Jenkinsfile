@@ -50,7 +50,7 @@ pipeline {
             steps {
                 sshagent(['ec2-ssh-key']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@<PRIVATE_EC2_IP> '
+                        ssh -o StrictHostKeyChecking=no ec2-user@10.0.2.128 '
                             aws ecr get-login-password --region ${AWS_REGION} \
                             | docker login --username AWS --password-stdin ${ECR_REPO} &&
                             docker rm -f nodeapp || true &&
