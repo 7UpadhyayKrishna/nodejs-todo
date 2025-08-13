@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         AWS_REGION = 'ap-south-1'
+        AWS_CREDENTIALS = credentials('aws-creds')
         ECR_REPO = '897722705527.dkr.ecr.ap-south-1.amazonaws.com/nodeapp'
         IMAGE_TAG = 'latest'
     }
@@ -24,10 +25,10 @@ pipeline {
 
         stage('Login to ECR') {
             steps {
-                withAWS(credentials: 'aws-creds', region: "${AWS_REGION}") {
+                withAWS(region: "${AWS_REGION}", credentials: "${AWS_CREDENTIALS}") {
                     sh """
-                        aws ecr get-login-password --region ${AWS_REGION} \
-                        | docker login --username AWS --password-stdin ${ECR_REPO}
+                    aws ecr get-login-password --region $AWS_REGION \
+                    | docker login --username AWS --password-stdin $ECR_REPO
                     """
                 }
             }
