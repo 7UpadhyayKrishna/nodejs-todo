@@ -17,9 +17,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh """
-                    docker build -t $ECR_REPO:$IMAGE_TAG .
-                """
+                sh "docker build -t $ECR_REPO:$IMAGE_TAG ."
             }
         }
 
@@ -27,35 +25,31 @@ pipeline {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                     sh """
-                    aws configure set aws_access_key_id AKIA5CBDRMZ3TBWWB57T
-                    aws configure set aws_secret_access_key 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
-                    aws ecr get-login-password --region ap-south-1 \
-                    | docker login --username AWS --password-stdin 897722705527.dkr.ecr.ap-south-1.amazonaws.com
+                        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+                        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+                        aws ecr get-login-password --region $AWS_REGION \
+                        | docker login --username AWS --password-stdin $ECR_REPO
                     """
                 }
-
             }
         }
 
-
         stage('Push to ECR') {
             steps {
-                sh """
-                    docker push ${ECR_REPO}:${IMAGE_TAG}
-                """
+                sh "docker push $ECR_REPO:$IMAGE_TAG"
             }
         }
 
         stage('Deploy on Private EC2') {
             steps {
-                sshagent(['test1.pem']) {
+                sshagent(['ec2-ssh-key']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ec2-user@10.0.2.128 '
-                            aws ecr get-login-password --region ${AWS_REGION} \
-                            | docker login --username AWS --password-stdin ${ECR_REPO} &&
+                            aws ecr get-login-password --region $AWS_REGION \
+                            | docker login --username AWS --password-stdin $ECR_REPO &&
                             docker rm -f nodeapp || true &&
-                            docker pull ${ECR_REPO}:${IMAGE_TAG} &&
-                            docker run -d --name nodeapp -p 3000:3000 ${ECR_REPO}:${IMAGE_TAG}
+                            docker pull $ECR_REPO:$IMAGE_TAG &&
+                            docker run -d --name nodeapp -p 3000:3000 $ECR_REPO:$IMAGE_TAG
                         '
                     """
                 }
