@@ -25,7 +25,7 @@ pipeline {
 
         stage('Login to ECR') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds-id']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                     sh """
                     aws configure set aws_access_key_id AKIA5CBDRMZ3TBWWB57T
                     aws configure set aws_secret_access_key 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
