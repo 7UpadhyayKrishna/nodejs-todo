@@ -48,7 +48,7 @@ pipeline {
 
         stage('Deploy on Private EC2') {
             steps {
-                sshagent(['ec2-ssh-key']) {
+                sshagent(['test1.pem']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ec2-user@10.0.2.128 '
                             aws ecr get-login-password --region ${AWS_REGION} \
